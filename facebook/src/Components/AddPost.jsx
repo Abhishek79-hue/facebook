@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import image from '../Images/Profile.jpeg';
 import './AddPost.css';
 import axios from 'axios';
@@ -10,28 +10,30 @@ function AddPost() {
   const [initialBackground, setInitialBackground] = useState("");
   const [editPostId, setEditPostId] = useState(null);
 
-  const { posts, UpdatePost, addPost, deletePost } = useFacebookPost();
-
+   const { posts, UpdatePost, addPost, deletePost,setPosts} = useFacebookPost();
+   
+   
   const handleSubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData();
     fd.append("file", background);
-
     try {
-
       let response = await axios.post("http://139.59.47.49:4004/api/upload/image", fd);
-      await axios.post("http://139.59.47.49:4004/api/post", { post: post, background: response.data.filename });
-      addPost({ post: post, background: response.data.filename });
+      await axios.post("http://139.59.47.49:4004/api/post", {post: post, background: response.data.filename });
+      addPost({post: post, background: response.data.filename });
       setPost("")
       setBackground("")
+      getData()
     } catch (error) {
       console.log("error", error);
-    }
-  };
+    }};
 
+    const getData=()=>{
+      let res=axios.get("http://139.59.47.49:4004/api/posts?limit=10&start=1&orderby=0")
+      // setPosts(res.data)
+    }
   const handleEdit = async (post) => {
     try {
-
       let response = await axios.get(`http://139.59.47.49:4004/api/post/${post.id}`);
 
       setPost(response.data.post)
@@ -42,9 +44,7 @@ function AddPost() {
       console.log("error", error)
     }
   };
-
   const handleUpdate = async (e) => {
-
     e.preventDefault();
     const fd = new FormData()
     if (background) {
@@ -74,15 +74,14 @@ function AddPost() {
       }
     }
   };
-
-  const handleDelete = async (id) => {
+  const handleDelete = async (post) => {
     try {
-      await axios.delete(`http://139.59.47.49:4004/api/post/delete/${id}`);
-      deletePost(id);
+      await axios.delete(`http://139.59.47.49:4004/api/post/delete/${post.id}`);
+      deletePost(post.id);
     } catch (error) {
       console.log("error", error);
     }
-  };
+  }
 
   return (
     <div>
@@ -146,7 +145,7 @@ function AddPost() {
                 </button>
                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                   <a className="dropdown-item" href="#" data-toggle="modal" data-target="#myModal" onClick={() => handleEdit(post)}>Edit</a>
-                  <a className="dropdown-item" href="#" onClick={() => handleDelete(post.id)}>Delete</a>
+                  <a className="dropdown-item" href="#" onClick={() => handleDelete(post)}>Delete</a>
                 </div>
               </div>
             </div>

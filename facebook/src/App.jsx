@@ -8,13 +8,16 @@ import axios from 'axios'
 function App() {
   const[posts,setPosts]=useState([])
 
-  useEffect(() => {
-    let data= axios.get("http://139.59.47.49:4004/api/posts?limit=10&start=1&orderby=0").then((res) => {
+  const getData =()=>{
+    axios.get("http://139.59.47.49:4004/api/posts?limit=10&start=1&orderby=0").then((res) => {
          setPosts(res.data)
      })
+  }
+  useEffect(() => {
+    getData()
  }, [])
-    const addPost=(post,background)=>{
-    setPosts((prev)=>[{...post,...background},...prev])
+    const addPost=()=>{
+      getData()
   }
   const UpdatePost = ({ id, post, background }) => {
     setPosts((prev) =>
@@ -29,7 +32,7 @@ function App() {
 
   return (
     <>
-   <FacebookpostProvider value={{posts,UpdatePost,addPost,deletePost}}>
+   <FacebookpostProvider value={{posts,UpdatePost,addPost,deletePost,setPosts}}>
 <ProfileHeader/>
  <AddPost/>
     
