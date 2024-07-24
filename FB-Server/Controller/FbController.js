@@ -12,7 +12,7 @@ const createPost=async(req,res)=>{
             background:image
         })
         await faceBook.save()
-        return res.status(200).send({message:"Post Sucessfully Added"})
+        return res.status(200).json(faceBook)
     } catch (error) {
         console.log("error dsfdsf")
     }
@@ -23,7 +23,7 @@ const FileUpload=async(req,res)=>{
         if(!req.file){
             return res.status(404).send({message:"No File Uploaded"})
         }else{
-            return res.status(200).json(req.file).send({message:"Image Sucessfully Uploaded"})
+            res.json({ message: 'File uploaded successfully', filename: req.file.filename });
         }
     } catch (error) {
         console.log("error")
@@ -61,49 +61,25 @@ const deletePost=async(req,res)=>{
        console.log("error") 
     }
 }
-const getAll = async (req, res) => {
+const getAll=async(req,res)=>{
     try {
-        // Get query parameters with default values
-        const limit = parseInt(req.query.limit) || 10;
-        const start = parseInt(req.query.start) || 0;
-        const orderBy = parseInt(req.query.orderBy) || 1; // 1 for ascending, 0 for descending
+        const total=await FaceBook.countDocuments()
 
-        // Validate parameters
-        if (isNaN(limit) || limit <= 0) {
-            return res.status(400).send({ message: "Invalid limit parameter" });
-        }
-        if (isNaN(start) || start < 0) {
-            return res.status(400).send({ message: "Invalid start parameter" });
-        }
-
-        // Determine the sort order
-        const sortOrder = orderBy === 1 ? 'createdAt' : '-createdAt'; // Ascending or descending
-
-        // Calculate the number of documents to skip
-        const skip = start;
-
-        // Fetch total count of documents
-        const total = await FaceBook.countDocuments();
-
-        // Fetch posts with pagination and sorting
-        const posts = await FaceBook.find()
-            .sort(sortOrder) // Apply the sorting order
-            .skip(skip)      // Skip the specified number of documents
-            .limit(limit);   // Limit the number of documents returned
-
-        // Send success response       
-        return res.status(200).send({
-            message: "All posts fetched successfully",
-            total,
-            posts
-        });
+        const limit=parseInt(req.query.limit)|| 10;
+        const start=parseInt(req.query.start)|| 1;
+        const orderBy=parseInt(req.query.orderBy)
+        const skip=(start-1)*limit
+        
+        const sorted=orderBy===1? 'createdAt: 1':'createdAt: -1'
+         
+        const posts=await FaceBook.find({})
+        .sort({sorted})
+        .skip(skip)
+        .limit(limit)
+     return res.status(200).send({message:"All post get Successfully",posts})
     } catch (error) {
-        console.error("Error fetching posts:", error.message);
-        return res.status(500).send({
-            message: "An error occurred while fetching posts",
-            error: error.message
-        });
+        console.log("error")
     }
-};
+}
 
 module.exports={createPost,FileUpload,updateFbPost,deletePost,getPost,getAll}
