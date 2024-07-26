@@ -4,8 +4,10 @@ const cors=require("cors")
 const bodyPaser=require("body-parser")
 const app=express()
 
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.urlencoded({ extended: false}));
-app.use(cors)
+app.use(cors())
 app.use(bodyPaser.json())
 
 const FbRouter=require("./FbRouter/Routes")

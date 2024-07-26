@@ -16,14 +16,20 @@ function AddPost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData();
-    fd.append("file", background);
+    fd.append("background", background);
+  
     try {
-      let response = await axios.post("http://139.59.47.49:4004/api/upload/image", fd);
-      await axios.post("http://139.59.47.49:4004/api/post", {post: post, background: response.data.filename });
-      addPost({post: post, background: response.data.filename });
+      const response = await axios.post('http://localhost:1200/api/uplaod/image', fd, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+      await axios.post("http://localhost:1200/api/post", {post:post,background:response.data.filename });
+      addPost({post:post, background:response.data.filename});
       setPost("")
+      setInitialBackground("")
       setBackground("")
-      getData()
+    getData()
     } catch (error) {
       console.log("error", error);
     }};
@@ -34,12 +40,11 @@ function AddPost() {
     }
   const handleEdit = async (post) => {
     try {
-      let response = await axios.get(`http://139.59.47.49:4004/api/post/${post.id}`);
-
+      let response = await axios.get(`http://localhost:1200/api/post/${post._id}`);
       setPost(response.data.post)
+      setEditPostId(response.data._id)
       setInitialBackground(response.data.background)
       setBackground(null)
-      setEditPostId(response.data.id)
     } catch (error) {
       console.log("error", error)
     }
@@ -48,12 +53,16 @@ function AddPost() {
     e.preventDefault();
     const fd = new FormData()
     if (background) {
-      fd.append("file", background)
+      fd.append("background", background)
 
       try {
-        let response = await axios.post("http://139.59.47.49:4004/api/upload/image", fd)
-        await axios.put("http://139.59.47.49:4004/api/post", { id: editPostId, post: post, background: response.data.filename })
-        UpdatePost({ id: editPostId, post: post, background: response.data.filename })
+        let response = await axios.post("http://localhost:1200/api/uplaod/image", fd,{
+          headers: {
+              'Content-Type': 'multipart/form-data',
+          },
+      })
+        await axios.put("http://localhost:1200/api/post/update", {id:editPostId,post:post,background:response.data.filename},{new:true})
+        UpdatePost({id:editPostId,post:post,background:response.data.filename})
         setInitialBackground("")
         setPost("")
         setEditPostId(null)
@@ -63,8 +72,8 @@ function AddPost() {
       }
     } else {
       try {
-        await axios.put(`http://139.59.47.49:4004/api/post`, { id: editPostId, post: post, background: initialBackground })
-        UpdatePost({ id: editPostId, post: post, background: initialBackground })
+        await axios.put(`http://localhost:1200/api/post/update`,{id:editPostId,post:post,background:initialBackground },{new:true})
+        UpdatePost({id:editPostId,post:post,background:initialBackground})
         setInitialBackground("")
         setPost("")
         setEditPostId(null)
@@ -76,13 +85,18 @@ function AddPost() {
   };
   const handleDelete = async (post) => {
     try {
-      await axios.delete(`http://139.59.47.49:4004/api/post/delete/${post.id}`);
-      deletePost(post.id);
+   await axios.delete(`http://localhost:1200/api/post/delete/${post._id}`);
+      deletePost(post._id);
     } catch (error) {
       console.log("error", error);
     }
   }
-
+const handleClear=()=>{
+  setInitialBackground("")
+  setPost("")
+  setEditPostId(null)
+  setBackground("")
+}
   return (
     <div>
       <div className='container'>
@@ -97,23 +111,22 @@ function AddPost() {
             <div className="modal-dialog modal-dialog-centered" role="document">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title">{!editPostId ? "Create Post" : "Edit Post"}</h5>
+                  <h5 className="modal-title">{!editPostId? "Create Post" : "Edit Post"}</h5>
                   <button type="button" id="myModalClose" className="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true" onClick={handleClear}>&times;</span>
                   </button>
                 </div>
                 <div className="modal-body">
                   <div className="post-body">
                     <img src={image} alt="Profile" className="profile-pic" />
-                    <img src={!background ? `http://139.59.47.49:4004/uploads/${initialBackground}` : URL.createObjectURL(background)} className="post-image" alt="Post" />
+                    <img src={!background ?`http://localhost:1200/uploads/${initialBackground}`: URL.createObjectURL(background)} className="post-image" alt="Post" />
                   </div>
                   <input
                     type="text"
                     className='text-area'
                     value={post}
                     onChange={(e) => setPost(e.target.value)}
-                    placeholder="What's on your mind?"
-                  />
+ />
                   <input
                     type="file"
                     id="fileInput"
@@ -122,7 +135,7 @@ function AddPost() {
                   />
                 </div>
                 <div className="modal-footer">
-                  {!editPostId ? (
+                  {!editPostId?(
                     <button type="button" className="btn btn-primary" data-dismiss="modal" aria-label="Close" onClick={handleSubmit}>Post</button>
                   ) : (
                     <button type="button" className="btn btn-primary" data-dismiss="modal" aria-label="Close" onClick={handleUpdate}>Save & Change</button>
@@ -134,7 +147,7 @@ function AddPost() {
         </div>
       </div>
       {posts.map((post) => (
-        <div key={post.id} className='post-wrapper'>
+        <div key={post._id} className='post-wrapper'>
           <div className='post'>
             <div className='post-header'>
               <img src={image} className='profile-image' alt="Profile" />
@@ -152,7 +165,7 @@ function AddPost() {
             <div className='post-body'>
               <div className='post-image-container'>
                 <div className='post-text'>{post.post}</div>
-                <img src={`http://139.59.47.49:4004/uploads/${post.background}`} className='post-image' alt="Post" />
+                <img src={`http://localhost:1200/uploads/${post.background}`} className='post-image' alt="Post" />
               </div>
             </div>
           </div>

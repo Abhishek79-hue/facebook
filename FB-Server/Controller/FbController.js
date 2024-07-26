@@ -1,15 +1,12 @@
-const { json } = require("body-parser")
+
 const FaceBook=require("./../Model/FbModel")
 
 const createPost=async(req,res)=>{
     try {
-        const {post}=req.body
-        if(req.file){
-            var image=req.file.filename
-        }
+        const {post,background}=req.body
         const faceBook=new FaceBook({
             post:post,
-            background:image
+            background:background
         })
         await faceBook.save()
         return res.status(200).json(faceBook)
@@ -31,55 +28,58 @@ const FileUpload=async(req,res)=>{
 }
 const updateFbPost=async(req,res)=>{
    try {
-    const userId=req.query.id
-    const update = { ...req.body };
-
-    if (req.file) {
-        update.background = req.file.filename;
-    }
-    const faceBook=await FaceBook.findByIdAndUpdate({_id:userId},update,{new:true})
-    return res.status(200).send({message:"Post Sucessfully Upadated",data:faceBook})
+    const userId=req.body.id
+    const {post,background} = req.body
+    const updatedPost = await FaceBook.findByIdAndUpdate({_id:userId},{$set:{post:post,background:background}},{new:true})
+    return res.status(200).json({message:"post sucessfully updated"})
    } catch (error) {
     console.log("Error")
    }
 }
 const getPost=async(req,res)=>{
     try {
-        const userId=req.query.id
+        const userId=req.params.id
         const faceBook=await FaceBook.findById({_id:userId})
-        return res.status(200).send({message:"Post Sucessfully find",data:faceBook})
+        return res.status(200).json(faceBook)
     } catch (error) {
         console.log("error")
     }
 }
 const deletePost=async(req,res)=>{
-    try {
-        const userId=req.query.id
+    try { 
+        const userId=req.params.id
         await FaceBook.findByIdAndDelete({_id:userId})
-        return res.status(200).send({message:"post sucessfully deleted"})
+        return res.status(200).json({message:"post sucessfully deletd"})
     } catch (error) {
        console.log("error") 
+    }
+}
+const uplaodfiles=async(req,res)=>{
+    try {
+        res.sendFile(path.join(__dirname, 'upload', req.params.filename));
+    } catch (error) {
+        console.log("error") 
     }
 }
 const getAll=async(req,res)=>{
     try {
         const total=await FaceBook.countDocuments()
 
-        const limit=parseInt(req.query.limit)|| 10;
+      
         const start=parseInt(req.query.start)|| 1;
-        const orderBy=parseInt(req.query.orderBy)
+        const limit=parseInt(req.query.limit)|| 10;
+        const orderBy=parseInt(req.query.orderBy)||0
         const skip=(start-1)*limit
         
-        const sorted=orderBy===1? 'createdAt: 1':'createdAt: -1'
+        const sorted=orderBy===1? 'createdAt:-1':'createdAt:1'
          
         const posts=await FaceBook.find({})
-        .sort({sorted})
+        .sort(sorted)
         .skip(skip)
         .limit(limit)
-     return res.status(200).send({message:"All post get Successfully",posts})
+     return res.status(200).json({message:"All Post Get Successfully",posts})
     } catch (error) {
         console.log("error")
     }
 }
-
-module.exports={createPost,FileUpload,updateFbPost,deletePost,getPost,getAll}
+module.exports={createPost,FileUpload,updateFbPost,deletePost,getPost,getAll,uplaodfiles}

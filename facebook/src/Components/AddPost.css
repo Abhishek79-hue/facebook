@@ -87,20 +87,6 @@
  
      display:inline-flex;
  }
- .text-area {
-     position: absolute;
-     border-color: transparent;
-     width: auto;
-     top: 70%;
-     left: 50%;
-     transform: translate(-50%, -50%);
-     font-size: 18px;
-     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-     text-align: center;
-     background-color: white;
-     color: black;
-     padding: 0 10px;
- }
  .post-wrapper {
     width:500px;
     margin: 20px auto;
@@ -172,7 +158,6 @@
 .post-image {
     width:100%;
 }
-
 .post-text {
     position: absolute;
     width: auto;
