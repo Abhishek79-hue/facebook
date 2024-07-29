@@ -24,13 +24,13 @@ function App() {
     const addPost=()=>{
       getData()
   }
-  const UpdatePost=(id,post)=>{
-    setPosts((prev)=>prev.filter((PrevPost)=>(PrevPost.id===id?post:PrevPost)))
+  const UpdatePost=(_id,post)=>{
+    setPosts((prev)=>prev.filter((PrevPost)=>(PrevPost._id===_id?post:PrevPost)))
     getData()
   }
-  const deletePost=(id)=>{
-    setPosts((prev)=>prev.filter((post)=>post.id!==id))
-    getData()
+  const deletePost=(_id)=>{
+    setPosts((prev)=>prev.filter((post)=>post._id!==_id))
+
   }
 
   return (

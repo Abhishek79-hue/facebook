@@ -4,6 +4,7 @@ import './AddPost.css';
 import axios from 'axios';
 import { useFacebookPost } from '../Context/FacekbookContext';
 
+
 function AddPost() {
   const [post, setPost] = useState("");
   const [background, setBackground] = useState("");
@@ -119,20 +120,20 @@ const handleClear=()=>{
                 <div className="modal-body">
                   <div className="post-body">
                     <img src={image} alt="Profile" className="profile-pic" />
-                    <img src={!background ?`http://localhost:1200/uploads/${initialBackground}`: URL.createObjectURL(background)} className="post-image" alt="Post" />
+                    <img src={!background ?`http://localhost:1200/upload/${initialBackground}`: URL.createObjectURL(background)} className="post-image" alt="Post" />
                   </div>
                   <input
                     type="text"
                     className='text-area'
                     value={post}
                     onChange={(e) => setPost(e.target.value)}
- />
-                  <input
-                    type="file"
-                    id="fileInput"
-                    className="file-input"
-                    onChange={(e) => setBackground(e.target.files[0])}
-                  />
+                 />
+             <div className="button_section">
+      <div className="button_group">
+        <label for="input1">Upload &nbsp; <i class="faupload"></i></label>
+        <input type="file"  id="input1" onChange={(e) => setBackground(e.target.files[0])} />
+      </div>
+      </div>
                 </div>
                 <div className="modal-footer">
                   {!editPostId?(
@@ -165,7 +166,7 @@ const handleClear=()=>{
             <div className='post-body'>
               <div className='post-image-container'>
                 <div className='post-text'>{post.post}</div>
-                <img src={`http://localhost:1200/uploads/${post.background}`} className='post-image' alt="Post" />
+                <img src={`http://localhost:1200/upload/${post.background}`} className='post-image' alt="Post" />
               </div>
             </div>
           </div>

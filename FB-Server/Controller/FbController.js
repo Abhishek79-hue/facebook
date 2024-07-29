@@ -56,7 +56,7 @@ const deletePost=async(req,res)=>{
 }
 const uplaodfiles=async(req,res)=>{
     try {
-        res.sendFile(path.join(__dirname, 'upload', req.params.filename));
+        res.sendFile(path.join(__dirname, 'uploads', req.params.filename));
     } catch (error) {
         console.log("error") 
     }
@@ -71,7 +71,7 @@ const getAll=async(req,res)=>{
         const orderBy=parseInt(req.query.orderBy)||0
         const skip=(start-1)*limit
         
-        const sorted=orderBy===1? 'createdAt:-1':'createdAt:1'
+        const sorted=orderBy===1 ?{createdAt:1}:{createdAt:-1}
          
         const posts=await FaceBook.find({})
         .sort(sorted)

@@ -171,3 +171,33 @@
     color: black;
     padding: 0 10px;
 }
+.button_section{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    align-items: center;
+}
+
+.button_group input{
+    display: none;
+}
+
+.button_group label{
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: block;
+    color: #fff;
+    padding: 15px 30px;
+    border-radius: 5px;
+    margin: 10px 0px;
+    transition: all 0.3s ease;
+}
+
+.button_group label{
+    background-color: #1e2350;
+}
+
+.button_group label:hover{
+    background-color: #11142e;
+}

@@ -9,6 +9,6 @@ Router.route("/post/update").put(FbController.updateFbPost)
 Router.route("/post/:id").get(FbController.getPost)
 Router.route("/get/post").get(FbController.getAll)
 Router.route("/post/delete/:id").delete(FbController.deletePost)
-Router.route("/uploads/:filename").get(FbController.uplaodfiles)
+Router.route("/upload/:filename").post(FbController.uplaodfiles)
 
 module.exports=Router;
